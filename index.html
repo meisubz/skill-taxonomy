@@ -22,17 +22,19 @@
             display: flex;
             justify-content: center;
             min-height: 100vh;
-            padding: 3rem 1rem;
         }
 
         .container {
             width: 100%;
             max-width: 1000px;
+            padding: 0 1rem 3rem 1rem;
+            /* Pushes content down so it starts after the fixed header */
+            margin-top: 240px; 
         }
 
         header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
 
         h1 {
@@ -47,16 +49,22 @@
             font-size: 1.1rem;
         }
 
-        /* Controls Area */
+        /* Fixed Controls Area */
         .directory-controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1.5rem;
-            margin-bottom: 3rem;
-            position: sticky;
-            top: 1rem;
-            z-index: 100;
+            padding: 2rem 1rem;
+            z-index: 1000;
+            /* Background ensures content doesn't show through */
+            background-color: rgba(248, 250, 252, 0.9); 
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border);
         }
 
         .tabs {
@@ -97,6 +105,7 @@
             font-size: 1.1rem;
             outline: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            background: white;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
 
@@ -141,22 +150,21 @@
 </head>
 <body>
 
-<div class="container">
+<div class="directory-controls">
     <header>
         <h1>Taxonomy Directory</h1>
         <p class="subtitle">Standardized classification for roles and technical capabilities</p>
     </header>
-
-    <div class="directory-controls">
-        <div class="tabs">
-            <button id="btnRoles" class="active" onclick="setView('roles')">Roles</button>
-            <button id="btnSkills" onclick="setView('skills')">Skills</button>
-        </div>
-        <div class="search-box">
-            <input type="text" id="searchBar" placeholder="Filter directory..." oninput="handleSearch()">
-        </div>
+    <div class="tabs">
+        <button id="btnRoles" class="active" onclick="setView('roles')">Roles</button>
+        <button id="btnSkills" onclick="setView('skills')">Skills</button>
     </div>
+    <div class="search-box">
+        <input type="text" id="searchBar" placeholder="Filter directory..." oninput="handleSearch()">
+    </div>
+</div>
 
+<div class="container">
     <div id="results" class="directory-grid"></div>
 </div>
 
