@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill & Role Taxonomy Directory</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 3rem 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -0.04em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Controls Area */
+        .directory-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            position: sticky;
+            top: 1rem;
+            z-index: 100;
+        }
+
+        .tabs {
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 12px;
+            display: inline-flex;
+        }
+
+        .tabs button {
+            padding: 0.6rem 2rem;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .tabs button.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 99px;
+            font-size: 1.1rem;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Directory Grid */
+        .directory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+
+        .entry {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: var(--text);
+            transition: all 0.15s ease;
+        }
+
+        .entry:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+            transform: scale(1.02);
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Taxonomy Directory</h1>
+        <p class="subtitle">Standardized classification for roles and technical capabilities</p>
+    </header>
+
+    <div class="directory-controls">
+        <div class="tabs">
+            <button id="btnRoles" class="active" onclick="setView('roles')">Roles</button>
+            <button id="btnSkills" onclick="setView('skills')">Skills</button>
+        </div>
+        <div class="search-box">
+            <input type="text" id="searchBar" placeholder="Filter directory..." oninput="handleSearch()">
+        </div>
+    </div>
+
+    <div id="results" class="directory-grid"></div>
+</div>
+
+<script>
+    const data = {
+        roles: ["SharePoint Administrator", "QA Automation Engineer", "QA Engineer", "Full Stack Java Developer", "Frontend Developer (React)", "Full Stack JavaScript Developer", "DevOps Engineer", "DevOps / SRE Engineer", "Security Engineer", "Database Developer", "Java GCP Developer", "Data Analyst", "Data Engineer", "Data Scientist", "Pre-Sales", "Guidewire Developer", "Guidewire Lead", "Guidewire Architect", "Full Stack .NET Developer", ".NET Developer", "PHP Developer", "AS400 Developer", "Boomi Developer", "Mainframe Consultant", "Software Engineer", "Software Engineer - Trainee", "ServiceNow Developer", "ServiceNow Architect", "Power BI Developer", "BigQuery Developer", "Network Engineer", "NOC Engineer", "Technical Recruiter", "Delivery Manager", "Project Manager", "Business Development / Sales", "Marketing"].sort(),
+        skills: ["SharePoint", "Power Apps", "Power Automate", "PowerShell", "Selenium", "Java", "API Testing", "Guidewire Testing", "Database Testing", "Spring Boot", "Hibernate", "React.js", "MySQL", "Guidewire Integration", "Guidewire Configuration", "Guidewire PolicyCenter", "JavaScript", "Node.js", "SQL", "AWS", "DevOps", "CI/CD", "Docker", "Kubernetes", "Application Security", "Cloud Security", "PostgreSQL", "Power BI", "Tableau", "Azure Data Factory", "Databricks", "Python", "Pre-Sales", "Presentations", "Reporting", "Demos", "Sales", ".NET Core", "Web API", "Entity Framework", "LINQ", "Angular", "Guidewire BillingCenter", "Guidewire ClaimCenter", "OOPs", ".NET", "AI/ML", "ServiceNow", "Architecture", "PHP", "CodeIgniter", "System Design", "API Development", "ASP.NET", "Razor", "Automation Testing", "Functional Testing", "AS400", "COBOL", "DB2", "Technical Recruiting", "BGP", "OSPF", "Fortinet", "SolarWinds", "SQL Server", "GCP", "GRC", "ITSM", "ETL", "Data Management", "Business Development", "Boomi", "REST API", "C#", "VB.NET", "Site Reliability Engineering", "Networking", "Routing", "Switching", "Network Security", "Machine Learning", "Deep Learning", "BigQuery", "Data Engineering", "Project Management", "Coordination", "Full Stack Development", "Data Structures", "Databases", "Marketing", "JasperReports", "Inside Sales"].sort()
+    };
+
+    let currentView = 'roles';
+    const searchBar = document.getElementById('searchBar');
+    const resultsContainer = document.getElementById('results');
+
+    function setView(view) {
+        currentView = view;
+        document.getElementById('btnRoles').classList.toggle('active', view === 'roles');
+        document.getElementById('btnSkills').classList.toggle('active', view === 'skills');
+        searchBar.value = '';
+        render();
+    }
+
+    function handleSearch() {
+        render();
+    }
+
+    function render() {
+        const searchTerm = searchBar.value.toLowerCase();
+        const filteredData = data[currentView].filter(item => 
+            item.toLowerCase().includes(searchTerm)
+        );
+
+        resultsContainer.innerHTML = '';
+
+        if (filteredData.length === 0) {
+            resultsContainer.innerHTML = '<div class="no-results">No entries match your filter.</div>';
+            return;
+        }
+
+        filteredData.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'entry';
+            div.textContent = item;
+            resultsContainer.appendChild(div);
+        });
+    }
+
+    render();
+</script>
+
+</body>
+</html>
