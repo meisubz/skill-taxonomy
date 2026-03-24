@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skill & Role Taxonomy Directory</title>
+    <title>Taxonomy Directory</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -47,7 +47,6 @@
             font-size: 1.1rem;
         }
 
-        /* Controls Area */
         .directory-controls {
             display: flex;
             flex-direction: column;
@@ -97,7 +96,6 @@
             font-size: 1.1rem;
             outline: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         input:focus {
@@ -105,7 +103,6 @@
             box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
         }
 
-        /* Directory Grid */
         .directory-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -127,7 +124,7 @@
         .entry:hover {
             border-color: var(--primary);
             background: #eff6ff;
-            transform: scale(1.02);
+            transform: translateY(-2px);
         }
 
         .no-results {
@@ -135,7 +132,6 @@
             text-align: center;
             padding: 4rem;
             color: var(--text-muted);
-            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -144,7 +140,7 @@
 <div class="container">
     <header>
         <h1>Taxonomy Directory</h1>
-        <p class="subtitle">Standardized classification for roles and technical capabilities</p>
+        <p class="subtitle">Alphabetical guide to roles and technical skills</p>
     </header>
 
     <div class="directory-controls">
@@ -153,7 +149,7 @@
             <button id="btnSkills" onclick="setView('skills')">Skills</button>
         </div>
         <div class="search-box">
-            <input type="text" id="searchBar" placeholder="Filter directory..." oninput="handleSearch()">
+            <input type="text" id="searchBar" placeholder="Filter alphabetically..." oninput="handleSearch()">
         </div>
     </div>
 
@@ -161,9 +157,16 @@
 </div>
 
 <script>
+    // Data is automatically sorted A-Z below using .sort()
+    const rawData = {
+        roles: ["SharePoint Administrator", "QA Automation Engineer", "QA Engineer", "Full Stack Java Developer", "Frontend Developer (React)", "Full Stack JavaScript Developer", "DevOps Engineer", "DevOps / SRE Engineer", "Security Engineer", "Database Developer", "Java GCP Developer", "Data Analyst", "Data Engineer", "Data Scientist", "Pre-Sales", "Guidewire Developer", "Guidewire Lead", "Guidewire Architect", "Full Stack .NET Developer", ".NET Developer", "PHP Developer", "AS400 Developer", "Boomi Developer", "Mainframe Consultant", "Software Engineer", "Software Engineer - Trainee", "ServiceNow Developer", "ServiceNow Architect", "Power BI Developer", "BigQuery Developer", "Network Engineer", "NOC Engineer", "Technical Recruiter", "Delivery Manager", "Project Manager", "Business Development / Sales", "Marketing"],
+        skills: ["SharePoint", "Power Apps", "Power Automate", "PowerShell", "Selenium", "Java", "API Testing", "Guidewire Testing", "Database Testing", "Spring Boot", "Hibernate", "React.js", "MySQL", "Guidewire Integration", "Guidewire Configuration", "Guidewire PolicyCenter", "JavaScript", "Node.js", "SQL", "AWS", "DevOps", "CI/CD", "Docker", "Kubernetes", "Application Security", "Cloud Security", "PostgreSQL", "Power BI", "Tableau", "Azure Data Factory", "Databricks", "Python", "Pre-Sales", "Presentations", "Reporting", "Demos", "Sales", ".NET Core", "Web API", "Entity Framework", "LINQ", "Angular", "Guidewire BillingCenter", "Guidewire ClaimCenter", "OOPs", ".NET", "AI/ML", "ServiceNow", "Architecture", "PHP", "CodeIgniter", "System Design", "API Development", "ASP.NET", "Razor", "Automation Testing", "Functional Testing", "AS400", "COBOL", "DB2", "Technical Recruiting", "BGP", "OSPF", "Fortinet", "SolarWinds", "SQL Server", "GCP", "GRC", "ITSM", "ETL", "Data Management", "Business Development", "Boomi", "REST API", "C#", "VB.NET", "Site Reliability Engineering", "Networking", "Routing", "Switching", "Network Security", "Machine Learning", "Deep Learning", "BigQuery", "Data Engineering", "Project Management", "Coordination", "Full Stack Development", "Data Structures", "Databases", "Marketing", "JasperReports", "Inside Sales"]
+    };
+
+    // This logic ensures the directory is ALWAYS sorted A-Z regardless of input order
     const data = {
-        roles: ["SharePoint Administrator", "QA Automation Engineer", "QA Engineer", "Full Stack Java Developer", "Frontend Developer (React)", "Full Stack JavaScript Developer", "DevOps Engineer", "DevOps / SRE Engineer", "Security Engineer", "Database Developer", "Java GCP Developer", "Data Analyst", "Data Engineer", "Data Scientist", "Pre-Sales", "Guidewire Developer", "Guidewire Lead", "Guidewire Architect", "Full Stack .NET Developer", ".NET Developer", "PHP Developer", "AS400 Developer", "Boomi Developer", "Mainframe Consultant", "Software Engineer", "Software Engineer - Trainee", "ServiceNow Developer", "ServiceNow Architect", "Power BI Developer", "BigQuery Developer", "Network Engineer", "NOC Engineer", "Technical Recruiter", "Delivery Manager", "Project Manager", "Business Development / Sales", "Marketing"].sort(),
-        skills: ["SharePoint", "Power Apps", "Power Automate", "PowerShell", "Selenium", "Java", "API Testing", "Guidewire Testing", "Database Testing", "Spring Boot", "Hibernate", "React.js", "MySQL", "Guidewire Integration", "Guidewire Configuration", "Guidewire PolicyCenter", "JavaScript", "Node.js", "SQL", "AWS", "DevOps", "CI/CD", "Docker", "Kubernetes", "Application Security", "Cloud Security", "PostgreSQL", "Power BI", "Tableau", "Azure Data Factory", "Databricks", "Python", "Pre-Sales", "Presentations", "Reporting", "Demos", "Sales", ".NET Core", "Web API", "Entity Framework", "LINQ", "Angular", "Guidewire BillingCenter", "Guidewire ClaimCenter", "OOPs", ".NET", "AI/ML", "ServiceNow", "Architecture", "PHP", "CodeIgniter", "System Design", "API Development", "ASP.NET", "Razor", "Automation Testing", "Functional Testing", "AS400", "COBOL", "DB2", "Technical Recruiting", "BGP", "OSPF", "Fortinet", "SolarWinds", "SQL Server", "GCP", "GRC", "ITSM", "ETL", "Data Management", "Business Development", "Boomi", "REST API", "C#", "VB.NET", "Site Reliability Engineering", "Networking", "Routing", "Switching", "Network Security", "Machine Learning", "Deep Learning", "BigQuery", "Data Engineering", "Project Management", "Coordination", "Full Stack Development", "Data Structures", "Databases", "Marketing", "JasperReports", "Inside Sales"].sort()
+        roles: [...rawData.roles].sort((a, b) => a.localeCompare(b)),
+        skills: [...rawData.skills].sort((a, b) => a.localeCompare(b))
     };
 
     let currentView = 'roles';
@@ -191,7 +194,7 @@
         resultsContainer.innerHTML = '';
 
         if (filteredData.length === 0) {
-            resultsContainer.innerHTML = '<div class="no-results">No entries match your filter.</div>';
+            resultsContainer.innerHTML = '<div class="no-results">No entries found for this filter.</div>';
             return;
         }
 
@@ -203,6 +206,7 @@
         });
     }
 
+    // Initial load
     render();
 </script>
 
